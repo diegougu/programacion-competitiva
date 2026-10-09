@@ -1,50 +1,55 @@
-#include <iostream>
-#include <string>
-#include <stack>
+#include <bits/stdc++.h>
+
 using namespace std;
 
 int main() {
-    string s;
 
-    while (getline(cin, s)) {
-        stack<char> pila;
-        bool correcto = true;
+	std::ios_base::sync_with_stdio(false);
 
-        for (int i = 0; i < (int)s.size(); i++) {
-            char c = s[i];
+	string line;
+	while (getline(cin, line)) {
 
-            if (c == '(' || c == '[' || c == '{' || c == '<') {
-                pila.push(c);
-            }
-            else if (c == ')' || c == ']' || c == '}' || c == '>') {
-                if (pila.empty()) {
-                    correcto = false;
-                    break;
-                }
+		stack<char> st;
 
-                char tope = pila.top();
-                pila.pop();
+		int len = 0;
+		bool bad = false;
+		for (int i = 0; i < line.length(); i++) {
+			len++;
+			if (line[i] == '(') {
+				if (i != line.length() - 1 && line[i + 1] == '*') {
+					st.push('*');
+					i++;
+				} else {
+					st.push(')');
+				}
+			} else if (line[i] == '{') {
+				st.push('}');
+			} else if (line[i] == '[') {
+				st.push(']');
+			} else if (line[i] == '<') {
+				st.push('>');
+			} else if ((line[i] == '*' && i != line.length() - 1 && line[i + 1] == ')') || line[i] == '>' || line[i] == ')' || line[i] == ']' || line[i] == '}') {
+				if (st.size() && st.top() == line[i]) {
+					st.pop();
+					if (line[i] == '*') i++;
+				} else {
+					cout << "NO " << len << endl;
+					bad = true;
+					break;
+				}
+			}
+		}
 
-                if ((c == ')' && tope != '(') ||
-                    (c == ']' && tope != '[') ||
-                    (c == '}' && tope != '{') ||
-                    (c == '>' && tope != '<')) {
-                    correcto = false;
-                    break;
-                }
-            }
-        }
+		if (bad) continue;
 
-        if (!pila.empty()) {
-            correcto = false;
-        }
+		if (!st.size()) {
+			cout << "YES\n";
+		} else {
+			cout << "NO " << len + 1 << endl;
+		}
 
-        if (correcto) {
-            cout << "YES\n";
-        } else {
-            cout << "NO\n";
-        }
-    }
 
-    return 0;
+	}
+
+	return 0;
 }
