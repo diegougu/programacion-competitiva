@@ -1,54 +1,55 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
 int main() {
-    int H, W, N;
+    int N, R, C, K;
 
-    while (cin >> H >> W >> N) {
-        if (H == 0 && W == 0 && N == 0) {
+    while (cin >> N >> R >> C >> K) {
+        if (N == 0 && R == 0 && C == 0 && K == 0)
             break;
-        }
 
-        vector<vector<int>> mapa(H, vector<int>(W));
-        vector<vector<int>> nuevo(H, vector<int>(W));
+        int a[100][100], b[100][100];
 
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                cin >> mapa[i][j];
-            }
-        }
+        for (int i = 0; i < R; i++)
+            for (int j = 0; j < C; j++)
+                cin >> a[i][j];
 
-        int dr[] = {-1, 1, 0, 0};
-        int dc[] = {0, 0, -1, 1};
+        int dx[] = {-1, 1, 0, 0};
+        int dy[] = {0, 0, -1, 1};
 
-        for (int dia = 0; dia < N; dia++) {
-            nuevo = mapa;
+        while (K--) {
+            for (int i = 0; i < R; i++)
+                for (int j = 0; j < C; j++)
+                    b[i][j] = a[i][j];
 
-            for (int i = 0; i < H; i++) {
-                for (int j = 0; j < W; j++) {
+            for (int i = 0; i < R; i++) {
+                for (int j = 0; j < C; j++) {
+                    int enemigo = (a[i][j] + 1) % N;
+
                     for (int k = 0; k < 4; k++) {
-                        int ni = i + dr[k];
-                        int nj = j + dc[k];
+                        int x = i + dx[k];
+                        int y = j + dy[k];
 
-                        if (ni >= 0 && ni < H && nj >= 0 && nj < W) {
-                            if (mapa[ni][nj] == (mapa[i][j] + 1) % H) {
-                                nuevo[ni][nj] = mapa[i][j];
-                            }
+                        if (x >= 0 && x < R && y >= 0 && y < C) {
+                            if (a[x][y] == enemigo)
+                                b[x][y] = a[i][j];
                         }
                     }
                 }
             }
 
-            mapa = nuevo;
+            for (int i = 0; i < R; i++)
+                for (int j = 0; j < C; j++)
+                    a[i][j] = b[i][j];
         }
 
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                if (j > 0) cout << " ";
-                cout << mapa[i][j];
+        for (int i = 0; i < R; i++) {
+            for (int j = 0; j < C; j++) {
+                if (j > 0)
+                    cout << ' ';
+                cout << a[i][j];
             }
-            cout << "\n";
+            cout << '\n';
         }
     }
 
