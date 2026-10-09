@@ -1,82 +1,68 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
+
 using namespace std;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
 
-    int n, caso = 1;
+	int n;
+	int tc = 0;
+	while (cin >> n, n) {
+		cout << "Case " << ++tc << ": ";
+		int a[n], b[n], c, sl[n], aw[n];
+		for (int i = 0; i < n; i++) {
+			cin >> a[i] >> b[i] >> c;
+			
+			if (c - 1 < a[i]) {
+				// awake
+				aw[i] = a[i] - c + 1;
+				sl[i] = -1;
+			} else {
+				// sleep
+				aw[i] = -1;
+				sl[i] = a[i] + b[i] - c + 1;
+			}
+		}
 
-    while (cin >> n && n != 0) {
-        vector<int> A(n), B(n), C(n);
+		int cc = 0;
+		while (true) {
+			int awake = 0;
 
-        for (int i = 0; i < n; i++) {
-            cin >> A[i] >> B[i] >> C[i];
-        }
+			for (int i = 0; i < n; i++) {
+				if (aw[i] > 0) awake++;
+			}
 
-        int tiempo = 0;
-        int despiertos;
+			if (awake == n) break;
 
-        while (true) {
-            despiertos = 0;
+			for (int i = 0; i < n; i++) {
+				if (sl[i] > 0) {
+					sl[i]--;
+					if (sl[i] == 0) {
+						sl[i] = -1;
+						aw[i] = a[i];
+					}
+				} else {
+					aw[i]--;
+					if (aw[i] == 0) {
+						if (awake >= n - awake) {
+							aw[i] = a[i];
+							continue;
+						}
+						aw[i] = -1;
+						sl[i] = b[i];
+					}
+				}
+			}
+			cc++;
+			if (cc > 1000) break;
+		}
 
-            for (int i = 0; i < n; i++) {
-                int ciclo = A[i] + B[i];
-                int estado = C[i] % ciclo;
+		if (cc > 1000) {
+			cout << "-1" << endl;
+			continue;
+		}
+		cout << cc + 1 << endl;
 
-                if (estado < A[i]) {
-                    despiertos++;
-                }
-            }
+	}
 
-            if (despiertos == n) {
-                cout << "Case " << caso++ << ": " << tiempo << '\n';
-                break;
-            }
-
-            bool cambio = false;
-
-            for (int i = 0; i < n; i++) {
-                int ciclo = A[i] + B[i];
-                int estado = C[i] % ciclo;
-
-                if (estado == A[i] - 1) {
-                    int dormidos = 0;
-
-                    for (int j = 0; j < n; j++) {
-                        int otroCiclo = A[j] + B[j];
-                        int otroEstado = C[j] % otroCiclo;
-
-                        if (otroEstado >= A[j]) {
-                            dormidos++;
-                        }
-                    }
-
-                    if (dormidos > n - dormidos) {
-                        C[i] = (C[i] + 1) % ciclo;
-                        cambio = true;
-                    }
-                }
-            }
-
-            for (int i = 0; i < n; i++) {
-                int ciclo = A[i] + B[i];
-                int estado = C[i] % ciclo;
-
-                if (estado != A[i] - 1 || !cambio) {
-                    C[i] = (C[i] + 1) % ciclo;
-                }
-            }
-
-            tiempo++;
-
-            if (tiempo > 100000) {
-                cout << "Case " << caso++ << ": -1\n";
-                break;
-            }
-        }
-    }
-
-    return 0;
+	return 0;
 }
